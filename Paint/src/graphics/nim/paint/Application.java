@@ -37,7 +37,7 @@ public class Application {
 			}
 			frames++;
 			if (System.currentTimeMillis() - time > 1000) {
-				System.out.println(frames);
+				System.out.println("Frames: " + frames);
 				frames = 0;
 				time = System.currentTimeMillis();
 			}

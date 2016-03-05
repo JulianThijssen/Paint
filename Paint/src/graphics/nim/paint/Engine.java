@@ -12,7 +12,7 @@ public class Engine implements MouseListener, KeyListener {
 	//private Queue<Dab> dabQueue = new ArrayBlockingQueue<Dab>(1000000);
 	private HashMap<String, Brush> brushSet = new HashMap<String, Brush>();
 	public List<Dab> dabs = new ArrayList<Dab>();
-	private Vector2f pdab = new Vector2f(0, 0);
+	private Vector2f pdab = null;
 	
 	public HashMap<String, Canvas> canvasses = new HashMap<String, Canvas>();
 	
@@ -40,24 +40,39 @@ public class Engine implements MouseListener, KeyListener {
 	}
 	
 	public void render() {
-		System.out.println(dabs.size());
+		//System.out.println(dabs.size());
 		renderer.update(currentCanvas);
 	}
 	
 	public void addDab(float x, float y) {
+		if (pdab == null) {
+			Dab dab = new Dab(x * 1/currentCanvas.getZoom(), y * 1/currentCanvas.getZoom());
+			dab.scale.set(currentBrush.getSize(), currentBrush.getSize(), 1);
+			dab.color.set(color);
+			dabs.add(dab);
+			pdab = new Vector2f(x, y);
+		}
 		Vector2f goal = new Vector2f(x, y);
-		Vector2f dir = Vector2f.normalise(goal);
-		System.out.println("IN the BEGINNING");
-		
+		Vector2f dir = Vector2f.normalise(Vector2f.sub(goal, pdab));
+
 		while (Vector2f.distance(goal, pdab) > currentBrush.getSize()) {
 			Vector2f newPos = new Vector2f(pdab.x + dir.x, pdab.y + dir.y);
 			Dab dab = new Dab(newPos.x * 1/currentCanvas.getZoom(), newPos.y * 1/currentCanvas.getZoom());
-			dab.scale.set(currentBrush.getSize(), currentBrush.getSize(), 0);
+			dab.scale.set(currentBrush.getSize(), currentBrush.getSize(), 1);
 			dab.color.set(color);
 			dabs.add(dab);
 			pdab.set(newPos.x, newPos.y);
-			System.out.println(Vector2f.distance(goal, pdab));
+			//System.out.println(Vector2f.distance(goal, pdab));
 		}
+		//Vector2f goal = new Vector2f(x, y);
+//		
+//		System.out.println("Dist: " + dir);
+//		pdab.set(x, y);
+//		
+//		Dab dab = new Dab(x * 1/currentCanvas.getZoom(), y * 1/currentCanvas.getZoom());
+//		dab.scale.set(currentBrush.getSize(), currentBrush.getSize(), 1);
+//		dab.color.set(color);
+//		dabs.add(dab);
 	}
 	
 	public void addCanvas(String name, int width, int height) {
